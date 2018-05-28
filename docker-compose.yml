@@ -1,0 +1,11 @@
+version: '3'
+services:
+  order_service:
+    build: ./order_service
+  customer_service:
+    build: ./customer_service
+  api_gateway_service:
+    build: ./api_gateway_service
+    ports: 
+      - 8080:8080
+    
