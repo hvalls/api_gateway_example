@@ -26,4 +26,5 @@ app.get('/orders/:orderId', (req, res) => {
 
 });
 
-app.listen(8080);
+const port = process.env.PORT || 8080;
+app.listen(port, () => console.log(`API Gateway started at port ${port}`));
