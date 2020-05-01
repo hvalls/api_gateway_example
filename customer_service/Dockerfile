@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 
-RUN npm install
+RUN yarn install
 
 COPY . .
 
 EXPOSE 8082
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
