@@ -1,27 +1,27 @@
-const express = require('express');
-const app = express();
+import express from 'express';
+import * as orderService from './orderService.js';
+import * as customerService from './customerService.js';
 
-const orderService = require('./orderService');
-const customerService = require('./customerService');
+const app = express();
 
 app.get('/orders/:orderId', (req, res) => {
 
-    orderService.getOrder(req.params.orderId)
-        .flatMap(
-            order => customerService.getCustomer(order.customerId), 
-            (order, customer) => {
-                delete order.customerId;
-                order.customer = customer;
-                return order;        
-            }
-        ).subscribe(
-            order => {
-                return res.json(order);
-            }, 
-            error => {
-                console.error(error);
-                return res.json({ error });
-            }
+  orderService.getOrder(req.params.orderId)
+    .flatMap(
+      order => customerService.getCustomer(order.customerId),
+      (order, customer) => {
+        delete order.customerId;
+        order.customer = customer;
+        return order;
+      }
+    ).subscribe(
+      order => {
+        return res.json(order);
+      },
+      error => {
+        console.error(error);
+        return res.json({ error });
+      }
     );
 
 });

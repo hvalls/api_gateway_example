@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   order_service:
     build: ./order_service
