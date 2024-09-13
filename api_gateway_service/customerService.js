@@ -1,26 +1,19 @@
-import rx from 'rx';
-import http from 'http';
+import { from } from 'rxjs';
+import fetch from 'node-fetch';
 
-export const getCustomer = customerId => {
-  return rx.Observable.create((observer) => {
-    const req = http.get({
-      hostname: 'customer_service',
-      port: 8082,
-      path: `/customers/${customerId}`
-    }, (res) => {
-      var body = '';
-      res.on('data', (chunk) => {
-        body += chunk;
-      });
-      res.on('end', () => {
-        observer.onNext(JSON.parse(body));
-        observer.onCompleted();
-      });
-    });
-    req.on('error', (err) => {
-      observer.onError(err);
-    });
-  }).catch(err => {
-    return rx.Observable.just({});
-  });
-}
+const CUSTOMER_SERVICE_URL = "http://customer_service:8082";
+
+export const getCustomer = (customerId) => {
+  return from(
+    fetch(`${CUSTOMER_SERVICE_URL}/customers/${customerId}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return await response.json();
+      })
+      .catch((err) => {
+        throw new Error(`Fetch error: ${err.message}`);
+      })
+  );
+};

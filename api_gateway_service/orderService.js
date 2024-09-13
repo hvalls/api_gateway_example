@@ -1,24 +1,19 @@
-import rx from 'rx';
-import http from 'http';
+import { from } from 'rxjs';
+import fetch from 'node-fetch';
 
-export const getOrder = orderId => {
-  return rx.Observable.create((observer) => {
-    const req = http.get({
-      hostname: 'order_service',
-      port: 8081,
-      path: `/orders/${orderId}`
-    }, (res) => {
-      var body = '';
-      res.on('data', (chunk) => {
-        body += chunk;
-      });
-      res.on('end', () => {
-        observer.onNext(JSON.parse(body));
-        observer.onCompleted();
-      });
-    });
-    req.on('error', (err) => {
-      observer.onError(err);
-    });
-  });
-}
+const ORDER_SERVICE_URL = "http://order_service:8081";
+
+export const getOrder = (orderId) => {
+  return from(
+    fetch(`${ORDER_SERVICE_URL}/orders/${orderId}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return await response.json();
+      })
+      .catch((err) => {
+        throw new Error(`Fetch error: ${err.message}`);
+      })
+  );
+};
